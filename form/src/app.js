@@ -4,6 +4,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRef, useEffect } from 'react';
 import styles from './app.module.css';
 
+const initialValues = {
+	email: '',
+	password: '',
+	passwordRepeat: '',
+};
+
 const sendData = data => {
 	console.log(data);
 };
@@ -12,7 +18,7 @@ const formSchema = yup.object().shape({
 	email: yup
 		.string()
 		.required('Обязательное поле для заполнения')
-		.matches(/^[\w\-@.]*$/, 'Допустимы только латинские буквы, цифры и _ . - @')
+		.matches(/^[\w@.-]*$/, 'Допустимы только латинские буквы, цифры и _ . - @')
 		.matches(
 			/^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/,
 			'Введён некорректный адрес электронной почты',
@@ -20,7 +26,7 @@ const formSchema = yup.object().shape({
 	password: yup
 		.string()
 		.required('Обязательное поле для заполнения')
-		.matches(/[A-Za-z0-9]/, 'Только латинские буквы или цифры')
+		.matches(/^[A-Za-z0-9]*$/, 'Только латинские буквы или цифры')
 		.matches(/[a-z]/, 'Должна быть хотя бы одна латинская буква')
 		.matches(/[A-Z]/, 'Должна быть хотя бы одна большая буква')
 		.matches(/\d/, 'Пароль должен содержать хотя бы одну цифру')
@@ -34,13 +40,10 @@ export const App = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		reset,
+		formState: { errors, isSubmitSuccessful, isValid },
 	} = useForm({
-		defaultValues: {
-			email: '',
-			password: '',
-			passwordRepeat: '',
-		},
+		defaultValues: initialValues,
 		resolver: yupResolver(formSchema),
 	});
 
@@ -52,69 +55,58 @@ export const App = () => {
 
 	const submitButtonRef = useRef(null);
 
-	// useEffect(() => {
-	// 	if (
-	// 		/^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/.test(email) &&
-	// 		/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}/g.test(password) &&
-	// 		password === passwordRepeat &&
-	// 		!formError
-	// 	)
-	// 		submitButtonRef.current.focus();
-	// }, [email, password, passwordRepeat, formError]);
-
-	// const onSubmit = event => {
-	// 	event.preventDefault();
-	// 	sendData(getState());
-	// 	resetState();
-	// 	emailRef.current.focus();
-	// };
+	useEffect(() => {
+		if (isSubmitSuccessful) {
+			reset(initialValues);
+		}
+		if (isValid) {
+			submitButtonRef.current.focus();
+		}
+	}, [isSubmitSuccessful, isValid]);
 
 	return (
 		<div className={styles.app}>
 			<form className={styles.form} onSubmit={handleSubmit(sendData)}>
-				<label htmlFor="email" className={styles.label}>
+				<label htmlFor='email' className={styles.label}>
 					{emailError}
 					<input
-						ref={register}
-						id="email"
-						type="email"
-						name="email"
+						id='email'
+						type='text'
+						name='email'
 						className={styles.input}
-						placeholder="Электронная почта"
+						placeholder='Электронная почта'
 						{...register('email')}
 						autoFocus
 					/>
 				</label>
-				<label htmlFor="password" className={styles.label}>
+				<label htmlFor='password' className={styles.label}>
 					{passwordError}
 					<input
-						ref={register}
-						id="password"
-						type="password"
-						name="password"
+						id='password'
+						type='password'
+						name='password'
 						className={styles.input}
-						placeholder="Пароль"
+						placeholder='Пароль'
 						{...register('password')}
 					/>
 				</label>
-				<label htmlFor="passwordRepeat" className={styles.label}>
+				<label htmlFor='passwordRepeat' className={styles.label}>
 					{passwordRepeatError}
 					<input
-						ref={register}
-						id="passwordRepeat"
-						type="password"
-						name="passwordRepeat"
+						id='passwordRepeat'
+						type='password'
+						name='passwordRepeat'
 						className={styles.input}
-						placeholder="Повтор пароля"
+						placeholder='Повтор пароля'
 						{...register('passwordRepeat')}
 					/>
 				</label>
-				<button type="button" className={styles.button}>
+				<button type='button' className={styles.button} onClick={() => reset(initialValues)}>
 					Сбросить данные
 				</button>
 				<button
 					ref={submitButtonRef}
-					type="submit"
+					type='submit'
 					className={styles.button}
 					disabled={!!formError}
 				>
