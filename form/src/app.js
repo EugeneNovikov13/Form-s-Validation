@@ -62,51 +62,58 @@ export const App = () => {
 		if (isValid) {
 			submitButtonRef.current.focus();
 		}
-	}, [isSubmitSuccessful, isValid]);
+	}, [isSubmitSuccessful, isValid, reset]);
 
 	return (
 		<div className={styles.app}>
 			<form className={styles.form} onSubmit={handleSubmit(sendData)}>
-				<label htmlFor='email' className={styles.label}>
+				<label htmlFor="email" className={styles.label}>
 					{emailError}
 					<input
-						id='email'
-						type='text'
-						name='email'
+						id="email"
+						type="text"
+						name="email"
+						autoComplete="username"
 						className={styles.input}
-						placeholder='Электронная почта'
+						placeholder="Электронная почта"
 						{...register('email')}
 						autoFocus
 					/>
 				</label>
-				<label htmlFor='password' className={styles.label}>
+				<label htmlFor="password" className={styles.label}>
 					{passwordError}
 					<input
-						id='password'
-						type='password'
-						name='password'
+						id="password"
+						type="password"
+						name="password"
+						autoComplete="new-password"
 						className={styles.input}
-						placeholder='Пароль'
+						placeholder="Пароль"
 						{...register('password')}
 					/>
 				</label>
-				<label htmlFor='passwordRepeat' className={styles.label}>
+				<label htmlFor="passwordRepeat" className={styles.label}>
 					{passwordRepeatError}
 					<input
-						id='passwordRepeat'
-						type='password'
-						name='passwordRepeat'
+						id="passwordRepeat"
+						type="password"
+						name="passwordRepeat"
+						autoComplete="new-password"
 						className={styles.input}
-						placeholder='Повтор пароля'
+						placeholder="Повтор пароля"
 						{...register('passwordRepeat')}
 					/>
 				</label>
-				<button type='button' className={styles.button} onClick={() => reset(initialValues)}>
+				<button
+					type="button"
+					className={styles.button}
+					onClick={() => reset(initialValues)}
+				>
 					Сбросить данные
 				</button>
 				<button
 					ref={submitButtonRef}
-					type='submit'
+					type="submit"
 					className={styles.button}
 					disabled={!!formError}
 				>
